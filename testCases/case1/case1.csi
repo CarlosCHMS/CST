@@ -1,0 +1,79 @@
+###############################################################################
+# CSU configuration file (.csi)
+#
+# author: Carlos Souza
+###############################################################################
+
+###############################################################################
+# CSU input parameters
+[input] 
+# Density [kg/m3]
+rho = 1000
+#
+# Heat capacity [J/K kg]
+Cp = 1800
+#
+# Condutivity [Wm/K]
+k = 100
+#
+# Total time [s]
+t = 1000
+#
+# Time step dt [s]
+dt = 0.5
+#
+# Mesh file name
+meshName = case1.mshsim
+#
+# Number of intermediary saves
+Nsave = 4
+#
+# Output file name
+outName = case1.csv
+#
+# Reference temperature
+Tref = 300
+#
+# Reference length
+Lref = 1
+#
+###############################################################################
+# Exemple: [Boundary = marker]
+# Type options: constant temperature, constant heat flux, domain
+# Input options: temperature, heat flux, initial temperature
+# Units: [K], [W/m2], [K]
+#------------------------------------------------------------------------------
+[boundary = 1]
+#
+type = constant temperature
+#
+temperature = 500
+#
+#------------------------------------------------------------------------------
+[boundary = 2]
+#
+type = constant temperature
+#
+temperature = 300
+#
+#------------------------------------------------------------------------------
+[boundary = 3]
+#
+type = constant heat flux
+#
+heat flux = 0
+#
+#------------------------------------------------------------------------------
+[boundary = 4]
+#
+type = constant heat flux
+#
+heat flux = 0
+#
+#------------------------------------------------------------------------------
+[boundary = 5]
+#
+type = domain
+#
+initial temperature = 400
+#
