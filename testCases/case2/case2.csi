@@ -39,9 +39,12 @@ Lref = 1
 #
 ###############################################################################
 # Exemple: [Boundary = marker]
-# Type options: constant temperature, constant heat flux, domain
-# Input options: temperature, heat flux, initial temperature
-# Units: [K], [W/m2], [K]
+# Type options: constant temperature, heat flux, domain
+# Input options: for constant temperature: temperature
+#                for heat flux: heat flux, 
+#                               convection coefficient, recuperation temperature
+#                               emissivity, environmental temperature
+# Units: SI
 #------------------------------------------------------------------------------
 [boundary = 1]
 #
