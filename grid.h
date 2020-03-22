@@ -22,7 +22,7 @@ struct gridStruct{
     int** elem;
 };
 
-void gridInit(struct gridStruct* grid, char* fileName, FTYPE Lref);
+void gridInit(struct gridStruct* grid, char* fileName);
 
 void gridPrintNumbers(struct gridStruct* grid);
 

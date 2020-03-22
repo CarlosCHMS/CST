@@ -7,6 +7,7 @@ struct solverStruct{
     int N;
 
     FTYPE c;
+    FTYPE k;
     FTYPE* T;
     FTYPE* Tnew;
     FTYPE* Tnew2;
@@ -16,7 +17,9 @@ struct solverStruct{
     FTYPE tol;
     int NmaxImplicit;
 
-    int saveStep;
+    int Nsave;
+
+    int* TPointShare;
 
     char* outputName;
     FILE outFile;
@@ -33,6 +36,8 @@ void solverInit(struct solverStruct* solver, struct gridStruct* grid, struct inp
 void solverInitTemp(struct solverStruct* solver);
 
 void solverPrintT(struct solverStruct* solver);
+
+void solverCalcTPointShare(struct solverStruct* solver);
 
 void solverPrintParameters(struct solverStruct* solver);
 

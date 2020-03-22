@@ -16,11 +16,11 @@ int main(){
 
     inputPrintParameters(input);
 
-    gridInit(grid, input->meshName, input->Lref);
+    gridInit(grid, input->meshName);
 
-    gridPrintNumbers(grid);
+    //gridPrintNumbers(grid);
 
-    gridPrintMarkers(grid);
+    //gridPrintMarkers(grid);
 
     //gridPrintCoords(grid);
 
@@ -41,6 +41,8 @@ int main(){
     //printf("\n%i", gridElementForPoint(grid, -0.5, -0.2));
 
     solverInit(solver, grid, input);
+
+    //solverPrintTPointShare(solver);
 
     //solverPrintParameters(solver);
 

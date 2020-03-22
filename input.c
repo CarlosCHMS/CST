@@ -7,10 +7,9 @@
 void inputInit(struct inputStruct* input){
 
     FILE* f1;
-    int ii, jj, kk, alocFlag;
+    int ii, jj, kk;
     char c;
     char s[100];
-    char a[50];
 
     input->meshName = "default.meshsim";
 
@@ -19,7 +18,7 @@ void inputInit(struct inputStruct* input){
     ii = 0;
     jj = 0;
     kk = 0;
-    alocFlag = 1;
+
     //Read input file
     while(c!=EOF){
         c = getc(f1);
@@ -50,6 +49,8 @@ void inputInit(struct inputStruct* input){
 
                 input->markers = (int*)malloc(input->Nmarkers*sizeof(int));
                 input->fInputs = (FTYPE*)malloc(input->Nmarkers*sizeof(FTYPE));
+                input->fInputs1 = (FTYPE*)malloc(input->Nmarkers*sizeof(FTYPE));
+                input->fInputs4 = (FTYPE*)malloc(input->Nmarkers*sizeof(FTYPE));
                 input->types = (char*)malloc(input->Nmarkers*sizeof(char));
 
             }else if(ii==3){
@@ -84,7 +85,7 @@ void inputInit(struct inputStruct* input){
 
                 if(kk>0){
 
-                    input->saveStep = strtod(s, NULL);
+                    input->Nsave = strtod(s, NULL);
 
                 };
 
@@ -99,7 +100,25 @@ void inputInit(struct inputStruct* input){
             }else if(ii==9){
 
                 if(kk>0){
-                    input->Lref = strtod(s, NULL);
+                    //input->Lref = strtod(s, NULL);
+                };
+
+            }else if(ii==10){
+
+                if(kk>0){
+                    input->fInputs1[kk-1] = strtod(s, NULL);
+                };
+
+            }else if(ii==11){
+
+                if(kk>0){
+                    input->k = strtod(s, NULL);
+                };
+
+            }else if(ii==10){
+
+                if(kk>0){
+                    input->fInputs4[kk-1] = strtod(s, NULL);
                 };
 
             };
@@ -141,15 +160,26 @@ void inputPrintParameters(struct inputStruct* input){
         printf("%f, ", input->fInputs[ii]);
     };
 
+    printf("\nBoundary inputs 1: ");
+    for(ii=0; ii<input->Nmarkers; ii++){
+        printf("%f, ", input->fInputs1[ii]);
+    };
+
     printf("\nBoundary types: ");
     for(ii=0; ii<input->Nmarkers; ii++){
         printf("%c, ", input->types[ii]);
     };
 
     printf("\nmeshName: %s", input->meshName);
-    printf("\nsaveStep: %i", input->saveStep);
+    printf("\nNsave: %i", input->Nsave);
     printf("\noutName: %s", input->outName);
-    printf("\nLref: %f", input->Lref);
+    //printf("\nLref: %f", input->Lref);
+
+    printf("\nBoundary inputs 4: ");
+    for(ii=0; ii<input->Nmarkers; ii++){
+        printf("%f, ", input->fInputs4[ii]);
+    };
+
 
 
 };

@@ -22,14 +22,13 @@ void gridAloc(struct gridStruct* grid){
 
 }
 
-void gridInit(struct gridStruct* grid, char* fileName, FTYPE Lref){
+void gridInit(struct gridStruct* grid, char* fileName){
 
     FILE* f1;
     int ii, jj, kk, alocFlag;
     char c;
     char s[100];
 
-    grid->Lref = Lref;
     grid->type1 = 4;
     grid->type2 = 5;
     grid->maxElemEntry = 5;
@@ -78,9 +77,9 @@ void gridInit(struct gridStruct* grid, char* fileName, FTYPE Lref){
 
                 //This if get coordinates properties
                 if(kk==0){
-                    grid->x[ii-(grid->Nm + 1)] = strtod(s, NULL)/Lref;
+                    grid->x[ii-(grid->Nm + 1)] = strtod(s, NULL);
                 }else{
-                    grid->y[ii-(grid->Nm + 1)] = strtod(s, NULL)/Lref;
+                    grid->y[ii-(grid->Nm + 1)] = strtod(s, NULL);
                 };
 
             }else if(ii<grid->Nm + grid->Np + grid->Ne + 1){

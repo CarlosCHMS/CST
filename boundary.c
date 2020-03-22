@@ -12,11 +12,13 @@ void boundaryAlloc(struct boundaryStruct* bound){
 
 }
 
-void boundaryInit(struct boundaryStruct* bound, struct gridStruct* grid, int* markers, FTYPE* fInputs, char* types){
+void boundaryInit(struct boundaryStruct* bound, struct gridStruct* grid, int* markers, FTYPE* fInputs, FTYPE* fInputs1, FTYPE* fInputs4, char* types){
 
     bound->markers = markers;
 
     bound->fInputs = fInputs;
+    bound->fInputs1 = fInputs1;
+    bound->fInputs4 = fInputs4;
     bound->types = types;
     bound->grid = grid;
 
@@ -77,6 +79,13 @@ FTYPE boundaryGetElemInput(struct boundaryStruct* bound, int ii){
 
 }
 
+/*
+FTYPE boundaryGetElemInput2(struct boundaryStruct* bound, int ii){
+
+    return bound->fInputs2[bound->elemIndex[ii]];
+
+}
+*/
 void boundaryPrintTypes(struct boundaryStruct* bound){
 
     int ii, jj;
@@ -144,3 +153,23 @@ int boundaryElemIsHeat(struct boundaryStruct* bound, int ie){
     return flag;
 
 }
+
+/*
+int boundaryElemIsConvec(struct boundaryStruct* bound, int ie){
+
+    int flag;
+
+    if(bound->types[bound->elemIndex[ie]] == 'C'){
+
+        flag = 1;
+
+    }else{
+
+        flag = 0;
+
+    };
+
+    return flag;
+
+}
+*/

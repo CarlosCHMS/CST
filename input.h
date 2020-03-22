@@ -4,15 +4,17 @@
     struct inputStruct{
 
         FTYPE c;
+        FTYPE k;
         int N;
         int Nmarkers;
         int* markers;
         FTYPE* fInputs;
+        FTYPE* fInputs1;
+        FTYPE* fInputs4;
         char* types;
         char* meshName;
-        int saveStep;
+        int Nsave;
         char* outName;
-        FTYPE Lref;
 
     };
 

@@ -5,6 +5,8 @@
 
         int* markers;
         FTYPE* fInputs;
+        FTYPE* fInputs1;
+        FTYPE* fInputs4;
         char* types;
 
         int* pointPropag;
@@ -16,7 +18,7 @@
 
     void boundaryAlloc(struct boundaryStruct* bound);
 
-    void boundaryInit(struct boundaryStruct* bound, struct gridStruct* grid, int* markers, FTYPE* fInputs, char* types);
+    void boundaryInit(struct boundaryStruct* bound, struct gridStruct* grid, int* markers, FTYPE* fInputs, FTYPE* fInputs1, FTYPE* fInputs4, char* types);
 
     void boundarySetPointPropag(struct boundaryStruct* bound);
 
@@ -30,6 +32,10 @@
 
     int boundaryElemIsHeat(struct boundaryStruct* bound, int ie);
 
+    //int boundaryElemIsConvec(struct boundaryStruct* bound, int ie);
+
     FTYPE boundaryGetElemInput(struct boundaryStruct* bound, int ii);
+
+    FTYPE boundaryGetElemInput2(struct boundaryStruct* bound, int ii);
 
 #endif // BOUDARY_H_INCLUDED
