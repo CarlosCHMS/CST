@@ -17,7 +17,7 @@ Cp = 1800
 k = 100
 #
 # Total time [s]
-t = 1000
+t = 1500
 #
 # Time step dt [s]
 dt = 0.5
@@ -59,14 +59,14 @@ temperature = 300
 #------------------------------------------------------------------------------
 [boundary = 3]
 #
-type = constant heat flux
+type = heat flux
 #
 heat flux = 0
 #
 #------------------------------------------------------------------------------
 [boundary = 4]
 #
-type = constant heat flux
+type = heat flux
 #
 heat flux = 0
 #

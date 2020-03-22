@@ -45,28 +45,28 @@ Lref = 1
 #------------------------------------------------------------------------------
 [boundary = 1]
 #
-type = constant heat flux
+type = heat flux
 #
 heat flux = 120000
 #
 #------------------------------------------------------------------------------
 [boundary = 2]
 #
-type = constant heat flux
+type = heat flux
 #
 heat flux = 0
 #
 #------------------------------------------------------------------------------
 [boundary = 3]
 #
-type = constant heat flux
+type = heat flux
 #
 heat flux = 0
 #
 #------------------------------------------------------------------------------
 [boundary = 4]
 #
-type = constant heat flux
+type = heat flux
 #
 heat flux = 0
 #

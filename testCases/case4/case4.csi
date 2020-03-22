@@ -17,7 +17,7 @@ Cp = 1800
 k = 100
 #
 # Total time [s]
-t = 200
+t = 300
 #
 # Time step dt [s]
 dt = 2

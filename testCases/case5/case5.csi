@@ -17,19 +17,19 @@ Cp = 1800
 k = 100
 #
 # Total time [s]
-t = 700
+t = 4000
 #
 # Time step dt [s]
-dt = 2
+dt = 1
 #
 # Mesh file name
-meshName = case3.mshsim
+meshName = case4.mshsim
 #
 # Number of intermediary saves
 Nsave = 4
 #
 # Output file name
-outName = output3.csv
+outName = output5.csv
 #
 # Reference temperature
 Tref = 300
@@ -44,35 +44,25 @@ Lref = 1
 #------------------------------------------------------------------------------
 [boundary = 1]
 #
-type = constant temperature
+type = heat flux
 #
-temperature = 300
+convection coefficient = 50
+#
+recuperation temperature = 350
 #
 #------------------------------------------------------------------------------
 [boundary = 2]
 #
-type = constant temperature
+type = heat flux
 #
-temperature = 300
+emissivity = 1
+#
+environmental temperature = 600
 #
 #------------------------------------------------------------------------------
 [boundary = 3]
 #
-type = constant temperature
-#
-temperature = 500
-#
-#------------------------------------------------------------------------------
-[boundary = 4]
-#
-type = constant temperature
-#
-temperature = 500
-#
-#------------------------------------------------------------------------------
-[boundary = 5]
-#
 type = domain
 #
-initial temperature = 400
+initial temperature = 300
 #
