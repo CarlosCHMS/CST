@@ -44,7 +44,7 @@ Lref = 1
 #                for heat flux: heat flux, 
 #                               convection coefficient, recuperation temperature
 #                               emissivity, environmental temperature
-# Units: [K], [W/m2], [K]
+# Units: SI
 #------------------------------------------------------------------------------
 [boundary = 1]
 #
