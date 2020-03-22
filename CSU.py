@@ -23,8 +23,15 @@ class configuration():
         self.inputName = os.path.abspath(inputName)
         self.config = configparser.ConfigParser()
         self.config.optionxform = str
-        self.config.read(self.inputName)
         
+        # Stefan-Boltzmann constant
+        self.sig =  5.670374419e-8
+
+        if not os.path.isfile(inputName):
+            
+            raise Exception('This .csi file does not exist')
+                
+        self.config.read(self.inputName)        
         self._read()
         
 
@@ -40,7 +47,7 @@ class configuration():
         
         self.section = 'input'
         
-        floatList = ['rho', 'Cp', 'k', 't', 'dt', 'Tref', 'Lref']
+        floatList = ['rho', 'Cp', 'k', 't', 'dt']
         
         for n in floatList:
             self.var[n] = self.config.getfloat(self.section, n)
@@ -59,6 +66,8 @@ class configuration():
 
         self.var['markers'] = []
         self.var['fInput'] = []
+        self.var['fInput1'] = []
+        self.var['fInput4'] = []
         self.var['types'] = []
 
         aux = ''
@@ -68,25 +77,58 @@ class configuration():
                 self.var['markers'].append(int(aux[1]))
                 typ = self.config.get(section, 'type')
                 typ = typ.strip()
-                print(typ)
+                #print(typ)
+                
                 if typ == 'constant temperature':
                     self.var['types'].append('T')
                     inp = self.config.getfloat(section, 'temperature')
                     self.var['fInput'].append(inp)
-                elif typ == 'constant heat flux':
+                    self.var['fInput1'].append(0.0)
+                    self.var['fInput4'].append(0.0)
+                    
+                elif typ == 'heat flux':
+                    
+                    heatDict = {'heat flux' : 0.0, 
+                                'convection coefficient' : 0.0,
+                                'recuperation temperature' : 0.0, 
+                                'emissivity' : 0.0, 
+                                'environment temperature' : 0.0}
+                    
                     self.var['types'].append('Q')
-                    inp = self.config.getfloat(section, 'heat flux')
-                    self.var['fInput'].append(inp)                    
+
+                    inputDict = dict(self.config.items(section))
+                    #print(inputDict)
+                    #print(heatDict)
+                    for inp in inputDict.keys():
+                        if inp != 'type':
+                            heatDict[inp] = float(inputDict[inp])
+
+                    q = heatDict['heat flux']
+                    h = heatDict['convection coefficient']
+                    Tr = heatDict['recuperation temperature']
+                    e = heatDict['emissivity']
+                    Te = heatDict['environment temperature']
+
+                    self.var['fInput'].append(q + h*Tr + e*self.sig*(Te**4))
+                    self.var['fInput1'].append(h)
+                    self.var['fInput4'].append(e*self.sig)
+
                 elif typ == 'domain':
                     self.var['types'].append('D')
                     inp = self.config.getfloat(section, 'initial temperature')
                     self.var['fInput'].append(inp)
+                    self.var['fInput1'].append(0.0)
+                    self.var['fInput4'].append(0.0)
+
                     
         self.var['Nmarkers'] = len(self.var['markers'])
         
         self.var['meshName'] = self.var['head']+'/'+self.var['meshName']        
         self.var['outName'] = self.var['head']+'/'+self.var['outName']
         
+        self.var['c'] = self.var['rho']*self.var['Cp']/self.var['dt']
+        self.var['N'] = int(self.var['t']/self.var['dt'])
+        self.var['Lref'] = 1 # Deprecated. Must be removed.
 
         return None
 
@@ -95,22 +137,6 @@ class configuration():
         for n in self.var.keys():
             print(n, ' = ', self.var[n])
             
-        return None
-    
-    def dimensionless(self):
-        
-        self.var['c'] = self.var['k']*self.var['dt']/(self.var['rho']*self.var['Cp']*(self.var['Lref']**2))
-        self.var['N'] = int(self.var['t']/self.var['dt'])
-        self.var['saveStep'] = int(self.var['N']/self.var['Nsave'])
-        
-        qref = (self.var['rho']*self.var['Cp']*self.var['Tref']*self.var['Lref']/self.var['dt'])
-        
-        for ii in range(0, self.var['Nmarkers']):
-            if self.var['types'][ii] == 'Q':
-                self.var['fInput'][ii] /= qref
-            else:
-                self.var['fInput'][ii] /= self.var['Tref']
-                              
         return None
 
     def printVarAuxFile(self):
@@ -122,12 +148,17 @@ class configuration():
                 tuple(self.var['markers']))
         print(('fInput,'+self.var['Nmarkers']*' %.10f,'+'') % 
                 tuple(self.var['fInput']))
+        print(('fInput1,'+self.var['Nmarkers']*' %.10f,'+'') % 
+                tuple(self.var['fInput1']))
         print(('types,'+self.var['Nmarkers']*' %s,'+'') % 
                 tuple(self.var['types']))
         print('meshName, %s,' % (self.var['meshName']))
-        print('saveStep, %i,' % (self.var['saveStep']))
+        print('Nsave, %i,' % (self.var['Nsave']))
         print('outName, %s,' % (self.var['outName']))
-        print('Lref, %f,' % (self.var['Lref']))       
+        print('Lref, %f,' % (self.var['Lref']))
+        print('k, %.10f,' % (self.var['k']))
+        print(('fInput4,'+self.var['Nmarkers']*' %.10f,'+'') % 
+                tuple(self.var['fInput4']))        
             
         return None
     
@@ -145,9 +176,14 @@ class configuration():
         f.write(('types,'+self.var['Nmarkers']*' %s,'+'\n') % 
                 tuple(self.var['types']))
         f.write('meshName, %s,\n' % (self.var['meshName']))
-        f.write('saveStep, %i,\n' % (self.var['saveStep']))
+        f.write('Nsave, %i,\n' % (self.var['Nsave']))
         f.write('outName, %s,\n' % (self.var['outName']))
         f.write('Lref, %f,\n' % (self.var['Lref']))
+        f.write(('fInput1,'+self.var['Nmarkers']*' %.10f,'+'\n') % 
+                tuple(self.var['fInput1']))
+        f.write('k, %.10f,\n' % (self.var['k']))
+        f.write(('fInput4,'+self.var['Nmarkers']*' %.10f,'+'\n') % 
+                tuple(self.var['fInput4']))        
         
         f.close()        
         
@@ -156,7 +192,6 @@ class configuration():
 class outputClass():
     
     def __init__(self, gridFileName, outFileName, var):
-        
         
         self.var = var
         self.Nm = 0
@@ -196,8 +231,7 @@ class outputClass():
                 iii = ii - (self.Nm + self.Np + 1)
                 aux = row.split(',')
                 for jj in range(0, len(aux)-1):
-                    self.elem[iii][jj] = int(aux[jj])
-                
+                    self.elem[iii][jj] = int(aux[jj])           
             
             ii += 1
         
@@ -220,7 +254,7 @@ class outputClass():
             elif ii < (self.Np + 1):
                 iii = ii - 1
                 aux = row.split(',')
-                auxSol[iii] = float(aux[0])*self.var['Tref']
+                auxSol[iii] = float(aux[0])
                 
                 if ii == self.Np:
                     self.solution.append(auxSol.copy())
@@ -349,14 +383,12 @@ if __name__=="__main__":
         
     else:
         
-        path = "./cases/case7/test7.cs"
-        #path = "./test7.cs"
+        path = "./testCases/case5/case5.csi"
         
     conf1 = configuration(path)
     
     print("\nCSU - Code of Simulation for Unstructured meshs:")    
     conf1.printVar()
-    conf1.dimensionless()
     print("\nAux File:")
     conf1.printVarAuxFile()
     conf1.writeAuxFile()
