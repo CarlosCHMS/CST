@@ -8,19 +8,19 @@
 # CSU input parameters
 [input] 
 # Total time [s]
-t = 4000
+t = 1000
 #
 # Time step dt [s]
 dt = 1
 #
 # Mesh file name
-meshName = case4.mshsim
+meshName = case6.mshsim
 #
 # Number of intermediary saves
 Nsave = 4
 #
 # Output file name
-outName = output5.csv
+outName = output6.csv
 #
 ###############################################################################
 [material = steel] 
@@ -57,25 +57,30 @@ k = 143
 #
 type = heat flux
 #
-convection coefficient = 50
-#
-recuperation temperature = 350
+heat flux = 0.0
 #
 #------------------------------------------------------------------------------
-[boundary = 2]
+[boundary = 4]
 #
 type = heat flux
 #
-emissivity = 1
-#
-environmental temperature = 600
+heat flux = 0.0
 #
 #------------------------------------------------------------------------------
-[boundary = 3]
+[boundary = 2]
 #
 type = domain
 #
 initial temperature = 300
 #
 material = steel
+#
+#------------------------------------------------------------------------------
+[boundary = 3]
+#
+type = domain
+#
+initial temperature = 400
+#
+material = aluminum
 #

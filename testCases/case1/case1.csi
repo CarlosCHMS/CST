@@ -6,21 +6,12 @@
 
 ###############################################################################
 # CSU input parameters
-[input] 
-# Density [kg/m3]
-rho = 1000
-#
-# Heat capacity [J/K kg]
-Cp = 1800
-#
-# Condutivity [Wm/K]
-k = 100
-#
+[input]
 # Total time [s]
-t = 1500
+t = 5000
 #
 # Time step dt [s]
-dt = 0.5
+dt = 2
 #
 # Mesh file name
 meshName = case1.mshsim
@@ -31,11 +22,27 @@ Nsave = 4
 # Output file name
 outName = case1.csv
 #
-# Reference temperature
-Tref = 300
+###############################################################################
+[material = steel] 
+# Density [kg/m3]
+rho = 7800
 #
-# Reference length
-Lref = 1
+# Heat capacity [J/K kg]
+Cp = 473
+#
+# Condutivity [Wm/K]
+k = 43
+#
+#------------------------------------------------------------------------------
+[material = aluminum] 
+# Density [kg/m3]
+rho = 2800
+#
+# Heat capacity [J/K kg]
+Cp = 795
+#
+# Condutivity [Wm/K]
+k = 143
 #
 ###############################################################################
 # Exemple: [Boundary = marker]
@@ -79,4 +86,6 @@ heat flux = 0
 type = domain
 #
 initial temperature = 400
+#
+material = steel
 #

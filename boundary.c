@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<math.h>
 #include "grid.h"
+#include "input.h"
 #include "boundary.h"
 
 
@@ -12,14 +13,17 @@ void boundaryAlloc(struct boundaryStruct* bound){
 
 }
 
-void boundaryInit(struct boundaryStruct* bound, struct gridStruct* grid, int* markers, FTYPE* fInputs, FTYPE* fInputs1, FTYPE* fInputs4, char* types){
+void boundaryInit(struct boundaryStruct* bound, struct gridStruct* grid, struct inputStruct* input){
 
-    bound->markers = markers;
+    bound->markers = input->markers;
 
-    bound->fInputs = fInputs;
-    bound->fInputs1 = fInputs1;
-    bound->fInputs4 = fInputs4;
-    bound->types = types;
+    bound->C = input->C;
+    bound->K = input->K;
+
+    bound->fInputs = input->fInputs;
+    bound->fInputs1 = input->fInputs1;
+    bound->fInputs4 = input->fInputs4;
+    bound->types = input->types;
     bound->grid = grid;
 
     boundaryAlloc(bound);
@@ -79,13 +83,6 @@ FTYPE boundaryGetElemInput(struct boundaryStruct* bound, int ii){
 
 }
 
-/*
-FTYPE boundaryGetElemInput2(struct boundaryStruct* bound, int ii){
-
-    return bound->fInputs2[bound->elemIndex[ii]];
-
-}
-*/
 void boundaryPrintTypes(struct boundaryStruct* bound){
 
     int ii, jj;
@@ -154,22 +151,3 @@ int boundaryElemIsHeat(struct boundaryStruct* bound, int ie){
 
 }
 
-/*
-int boundaryElemIsConvec(struct boundaryStruct* bound, int ie){
-
-    int flag;
-
-    if(bound->types[bound->elemIndex[ie]] == 'C'){
-
-        flag = 1;
-
-    }else{
-
-        flag = 0;
-
-    };
-
-    return flag;
-
-}
-*/

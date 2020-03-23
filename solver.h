@@ -6,13 +6,14 @@ struct solverStruct{
     //Number of iteractions
     int N;
 
-    FTYPE c;
-    FTYPE k;
+    //FTYPE c;
+    //FTYPE k;
     FTYPE* T;
     FTYPE* Tnew;
     FTYPE* Tnew2;
     FTYPE* flux;
     FTYPE* fluxnew;
+    FTYPE* dualCA;
 
     FTYPE tol;
     int NmaxImplicit;

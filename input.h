@@ -3,8 +3,8 @@
 
     struct inputStruct{
 
-        FTYPE c;
-        FTYPE k;
+        //FTYPE c;
+        //FTYPE k;
         int N;
         int Nmarkers;
         int* markers;
@@ -15,6 +15,8 @@
         char* meshName;
         int Nsave;
         char* outName;
+        FTYPE* C;
+        FTYPE* K;
 
     };
 

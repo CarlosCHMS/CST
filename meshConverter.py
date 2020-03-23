@@ -132,7 +132,6 @@ if __name__=='__main__':
     nodes = calculateNodes()
 
     gmsh.finalize()
-    
     # Open output file
     out = open(fileName+"sim", 'w')
     

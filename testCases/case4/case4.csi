@@ -7,15 +7,6 @@
 ###############################################################################
 # CSU input parameters
 [input] 
-# Density [kg/m3]
-rho = 1000
-#
-# Heat capacity [J/K kg]
-Cp = 1800
-#
-# Condutivity [Wm/K]
-k = 100
-#
 # Total time [s]
 t = 300
 #
@@ -31,11 +22,27 @@ Nsave = 4
 # Output file name
 outName = output4.csv
 #
-# Reference temperature
-Tref = 300
+###############################################################################
+[material = steel] 
+# Density [kg/m3]
+rho = 7800
 #
-# Reference length
-Lref = 1
+# Heat capacity [J/K kg]
+Cp = 473
+#
+# Condutivity [Wm/K]
+k = 43
+#
+#------------------------------------------------------------------------------
+[material = aluminum] 
+# Density [kg/m3]
+rho = 2800
+#
+# Heat capacity [J/K kg]
+Cp = 795
+#
+# Condutivity [Wm/K]
+k = 143
 #
 ###############################################################################
 # Exemple: [Boundary = marker]
@@ -66,3 +73,4 @@ type = domain
 #
 initial temperature = 400
 #
+material = aluminum

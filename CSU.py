@@ -15,6 +15,14 @@ import sys
 import subprocess as sp
 import os
 
+class material():
+    
+    def __init__(self):
+        
+        self.rho = 0
+        self.Cp = 0
+        self.k = 0
+        
 
 class configuration():
 
@@ -42,12 +50,13 @@ class configuration():
         head, tail = os.path.split(self.inputName)
         self.var['head'] = head
         self.var['tail'] = tail
+        flagMaterial = False
 
         # Read input values
         
         self.section = 'input'
         
-        floatList = ['rho', 'Cp', 'k', 't', 'dt']
+        floatList = ['t', 'dt']
         
         for n in floatList:
             self.var[n] = self.config.getfloat(self.section, n)
@@ -69,11 +78,27 @@ class configuration():
         self.var['fInput1'] = []
         self.var['fInput4'] = []
         self.var['types'] = []
+        self.var['material'] = dict()
+        self.var['markerMat'] = []
 
         aux = ''
         for section in self.config.sections():
+            if "material" in section:
+                flagMaterial = True
+                aux = section.split('=')
+                name = str(aux[1]).strip()
+                
+                self.var['material'][name] = dict()
+                                
+                self.var['material'][name]['rho'] = self.config.getfloat(section, 'rho')
+                self.var['material'][name]['Cp'] = self.config.getfloat(section, 'Cp')
+                self.var['material'][name]['k'] = self.config.getfloat(section, 'k')
+          
+        print(self.var['material'])
+        for section in self.config.sections():        
+        
             if "boundary" in section:
-                aux = section.split('=')               
+                aux = section.split('=')
                 self.var['markers'].append(int(aux[1]))
                 typ = self.config.get(section, 'type')
                 typ = typ.strip()
@@ -85,6 +110,7 @@ class configuration():
                     self.var['fInput'].append(inp)
                     self.var['fInput1'].append(0.0)
                     self.var['fInput4'].append(0.0)
+                    self.var['markerMat'].append(None)
                     
                 elif typ == 'heat flux':
                     
@@ -112,6 +138,7 @@ class configuration():
                     self.var['fInput'].append(q + h*Tr + e*self.sig*(Te**4))
                     self.var['fInput1'].append(h)
                     self.var['fInput4'].append(e*self.sig)
+                    self.var['markerMat'].append(None)
 
                 elif typ == 'domain':
                     self.var['types'].append('D')
@@ -119,14 +146,34 @@ class configuration():
                     self.var['fInput'].append(inp)
                     self.var['fInput1'].append(0.0)
                     self.var['fInput4'].append(0.0)
+                    
+                    if flagMaterial:
+                        inp = self.config.get(section, 'material')
+                        self.var['markerMat'].append(self.var['material'][inp])
+                    else:
+                        self.var['markerMat'].append(None)
 
+        #print(self.var['markerMat'])
                     
         self.var['Nmarkers'] = len(self.var['markers'])
         
+        self.var['C'] = []
+        self.var['K'] = []
+        if flagMaterial:
+            for ii in range(0, self.var['Nmarkers']):
+                if self.var['types'][ii] == 'D':
+                    rho = self.var['markerMat'][ii]['rho']
+                    Cp = self.var['markerMat'][ii]['Cp']
+                    self.var['C'].append(rho*Cp/self.var['dt'])
+                    self.var['K'].append(self.var['markerMat'][ii]['k'])
+                else:
+                    self.var['C'].append(0.0)
+                    self.var['K'].append(0.0)     
+                
         self.var['meshName'] = self.var['head']+'/'+self.var['meshName']        
         self.var['outName'] = self.var['head']+'/'+self.var['outName']
         
-        self.var['c'] = self.var['rho']*self.var['Cp']/self.var['dt']
+        #self.var['c'] = self.var['rho']*self.var['Cp']/self.var['dt']
         self.var['N'] = int(self.var['t']/self.var['dt'])
         self.var['Lref'] = 1 # Deprecated. Must be removed.
 
@@ -141,7 +188,8 @@ class configuration():
 
     def printVarAuxFile(self):
         
-        print('c, %.10f,' % (self.var['c']))
+        #print('c, %.10f,' % (self.var['c']))
+        print('vague,')
         print('N, %i,' % (self.var['N']))
         print('Nmarkers, %i,' % (self.var['Nmarkers']))
         print(('markers,'+self.var['Nmarkers']*' %i,'+'') % 
@@ -156,9 +204,17 @@ class configuration():
         print('Nsave, %i,' % (self.var['Nsave']))
         print('outName, %s,' % (self.var['outName']))
         print('Lref, %f,' % (self.var['Lref']))
-        print('k, %.10f,' % (self.var['k']))
+        #print('k, %.10f,' % (self.var['k']))
+        print('vague,')
         print(('fInput4,'+self.var['Nmarkers']*' %.10f,'+'') % 
-                tuple(self.var['fInput4']))        
+                tuple(self.var['fInput4']))
+        
+        print(('C,'+len(self.var['C'])*' %.10f,'+'') % 
+                tuple(self.var['C']))
+        print(('K,'+len(self.var['K'])*' %.10f,'+'') % 
+                tuple(self.var['K']))
+
+
             
         return None
     
@@ -166,7 +222,8 @@ class configuration():
         
         f = open('aux.csv', 'w')
         
-        f.write('c, %.10f,\n' % (self.var['c']))
+        #f.write('c, %.10f,\n' % (self.var['c']))
+        f.write('vague,\n')
         f.write('N, %i,\n' % (self.var['N']))
         f.write('Nmarkers, %i,\n' % (self.var['Nmarkers']))
         f.write(('markers,'+self.var['Nmarkers']*' %i,'+'\n') % 
@@ -178,12 +235,20 @@ class configuration():
         f.write('meshName, %s,\n' % (self.var['meshName']))
         f.write('Nsave, %i,\n' % (self.var['Nsave']))
         f.write('outName, %s,\n' % (self.var['outName']))
-        f.write('Lref, %f,\n' % (self.var['Lref']))
+        #f.write('Lref, %f,\n' % (self.var['Lref']))
+        f.write('vague,\n')
         f.write(('fInput1,'+self.var['Nmarkers']*' %.10f,'+'\n') % 
                 tuple(self.var['fInput1']))
-        f.write('k, %.10f,\n' % (self.var['k']))
+        #f.write('k, %.10f,\n' % (self.var['k']))
+        f.write('vague,\n')
         f.write(('fInput4,'+self.var['Nmarkers']*' %.10f,'+'\n') % 
                 tuple(self.var['fInput4']))        
+        
+        f.write(('C,'+len(self.var['C'])*' %.10f,'+'\n') % 
+                tuple(self.var['C']))
+        f.write(('K,'+len(self.var['K'])*' %.10f,'+'\n') % 
+                tuple(self.var['K']))
+
         
         f.close()        
         
@@ -383,7 +448,7 @@ if __name__=="__main__":
         
     else:
         
-        path = "./testCases/case5/case5.csi"
+        path = "./testCases/case1/case1.csi"
         
     conf1 = configuration(path)
     
@@ -393,7 +458,7 @@ if __name__=="__main__":
     conf1.printVarAuxFile()
     conf1.writeAuxFile()
     print()
-       
+
     sp.call("./bin/Debug/CSU", shell=True)
     
     out1 = outputClass(conf1.var['meshName'], conf1.var['outName'], conf1.var)
