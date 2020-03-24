@@ -3,10 +3,10 @@ $MeshFormat
 $EndMeshFormat
 $PhysicalNames
 4
-1 1 "wall1"
-1 4 "wall2"
-2 2 "domain1"
-2 3 "domain2"
+1 1 "wall"
+1 4 "inter"
+2 2 "square"
+2 3 "circle"
 $EndPhysicalNames
 $Entities
 5 5 2 0

@@ -28,7 +28,7 @@ void inputInit(struct inputStruct* input){
             s[jj] = '\0';
             jj = 0;
             //printf("%s, ", s);
-            printf("\ni: %i, k: %i, s: %s", ii, kk, s);
+            //printf("\ni: %i, k: %i, s: %s", ii, kk, s);
             if(ii==0){
 
                 if(kk==1){
@@ -129,7 +129,7 @@ void inputInit(struct inputStruct* input){
             }else if(ii==13){
 
                 if(kk>0){
-                    printf("\noi: %s", s);
+                    //printf("\noi: %s", s);
                     input->C[kk-1] = strtod(s, NULL);
                 };
 

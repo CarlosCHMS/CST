@@ -22,6 +22,20 @@ Tri elements:
 
 """
 
+def plotNodes(nodes):
+
+    plt.figure()
+
+    for ii in range(0, len(nodes)):
+        x1 = nodes[ii, 0]
+        y1 = nodes[ii, 1]
+                
+        plt.scatter(x1, y1)
+        plt.text(x1, y1, str(ii+1))
+
+    plt.axis('equal')
+    plt.show()
+
 
 def calculateNodes():
     
@@ -57,19 +71,22 @@ class block():
         self.elemMarkers = []
         
         for e in self.eList:
-            elemTypes, elemTags0, elemNodeTags0 = gmsh.model.mesh.getElements(e[0], e[1])
-            elemTags += elemTags0[0]
-            elemNodeTags += elemNodeTags0[0]
-            marker = gmsh.model.getPhysicalGroupsForEntity(e[0], e[1])[0]
-            markerName = gmsh.model.getPhysicalName(e[0], marker)
-            
-            if (marker, markerName) not in self.elemMarkers:
-                self.elemMarkers.append((marker, str(markerName)))
-                    
-            self.markerDict[str(markerName)] = marker
-            
-            for ii in range(0, len(elemTags0[0])):
-                elemP.append(marker)
+            try:
+                elemTypes, elemTags0, elemNodeTags0 = gmsh.model.mesh.getElements(e[0], e[1])
+                elemTags += elemTags0[0]
+                elemNodeTags += elemNodeTags0[0]
+                marker = gmsh.model.getPhysicalGroupsForEntity(e[0], e[1])[0]
+                markerName = gmsh.model.getPhysicalName(e[0], marker)
+                
+                if (marker, markerName) not in self.elemMarkers:
+                    self.elemMarkers.append((marker, str(markerName)))
+                        
+                self.markerDict[str(markerName)] = marker
+                
+                for ii in range(0, len(elemTags0[0])):
+                    elemP.append(marker)
+            except:
+                print('element fail: ', e)
 
         self.N = len(elemTags)
 
@@ -125,11 +142,11 @@ if __name__=='__main__':
     blk1 = block(e1List, 4)
     blk2 = block(e2List, 5)
     
-        
     elemMarkers = blk1.elemMarkers + blk2.elemMarkers
     print(elemMarkers)
     
     nodes = calculateNodes()
+    # plotNodes(nodes)
 
     gmsh.finalize()
     # Open output file

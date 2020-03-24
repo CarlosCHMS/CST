@@ -112,6 +112,13 @@ class configuration():
                     self.var['fInput4'].append(0.0)
                     self.var['markerMat'].append(None)
                     
+                elif typ == 'interface':
+                    self.var['types'].append('I')
+                    self.var['fInput'].append(0.0)
+                    self.var['fInput1'].append(0.0)
+                    self.var['fInput4'].append(0.0)
+                    self.var['markerMat'].append(None)                    
+                    
                 elif typ == 'heat flux':
                     
                     heatDict = {'heat flux' : 0.0, 
@@ -433,6 +440,26 @@ class outputClass():
         
         return None
     
+    def sectionPlot(self, xy, N):
+        
+        x = np.linspace(xy[0], xy[1], N)
+        y = np.linspace(xy[2], xy[3], N)
+ 
+        plt.figure()
+        leg = []
+        
+        for ii in range(0, len(self.Ns)):    
+            leg.append("t: %.0f [s]" % (self.Ns[ii]*self.var['dt']))
+            interp = mtri.LinearTriInterpolator(self.triangulation, self.solution[ii])
+            z = interp(x, y)
+            plt.plot(x, z)
+        
+        plt.grid(True)
+        plt.legend(leg)
+        plt.show()
+            
+        
+        return None
 
 if __name__=="__main__":
 
@@ -448,7 +475,7 @@ if __name__=="__main__":
         
     else:
         
-        path = "./testCases/case1/case1.csi"
+        path = "./testCases/case7/case7.csi"
         
     conf1 = configuration(path)
     
@@ -463,5 +490,7 @@ if __name__=="__main__":
     
     out1 = outputClass(conf1.var['meshName'], conf1.var['outName'], conf1.var)
     out1.plot(grid=False)
+    
+    #out1.sectionPlot([0, 1, 0.05, 0.05], 100)
 
 

@@ -46,11 +46,13 @@ k = 143
 #
 ###############################################################################
 # Exemple: [Boundary = marker]
-# Type options: constant temperature, heat flux, domain
+# Type options: constant temperature, heat flux, domain, interface
 # Input options: for constant temperature: temperature
 #                for heat flux: heat flux, 
 #                               convection coefficient, recuperation temperature
 #                               emissivity, environmental temperature
+#                for interface: None
+#                for domain: initial temperature, material
 # Units: SI
 #------------------------------------------------------------------------------
 [boundary = 1]

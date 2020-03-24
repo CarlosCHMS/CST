@@ -18,13 +18,13 @@ Recursive Delete {
   Surface{1}; 
 }
 //+
-Physical Curve("wall1") = {3, 2, 1, 4};
+Physical Curve("wall") = {3, 2, 1, 4};
 //+
-Physical Surface("domain1") = {2};
+Physical Surface("square") = {2};
 //+
-Physical Surface("domain2") = {3};
+Physical Surface("circle") = {3};
 //+
-Physical Curve("wall2") = {5};
+Physical Curve("inter") = {5};
 //+
 Characteristic Length {1, 2, 3, 4} = 0.03;
 //+
