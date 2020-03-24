@@ -32,7 +32,7 @@ void inputInit(struct inputStruct* input){
             if(ii==0){
 
                 if(kk==1){
-                    input->c = strtod(s, NULL);
+                    //input->c = strtod(s, NULL);
                 };
 
             }else if(ii==1){
@@ -48,10 +48,14 @@ void inputInit(struct inputStruct* input){
                 };
 
                 input->markers = (int*)malloc(input->Nmarkers*sizeof(int));
+                input->C = (FTYPE*)malloc(input->Nmarkers*sizeof(FTYPE));
+                input->K = (FTYPE*)malloc(input->Nmarkers*sizeof(FTYPE));
                 input->fInputs = (FTYPE*)malloc(input->Nmarkers*sizeof(FTYPE));
                 input->fInputs1 = (FTYPE*)malloc(input->Nmarkers*sizeof(FTYPE));
                 input->fInputs4 = (FTYPE*)malloc(input->Nmarkers*sizeof(FTYPE));
                 input->types = (char*)malloc(input->Nmarkers*sizeof(char));
+
+                //printf("\noioioi");
 
             }else if(ii==3){
 
@@ -112,13 +116,27 @@ void inputInit(struct inputStruct* input){
             }else if(ii==11){
 
                 if(kk>0){
-                    input->k = strtod(s, NULL);
+                    //input->k = strtod(s, NULL);
                 };
 
-            }else if(ii==10){
+            }else if(ii==12){
 
                 if(kk>0){
+                    //printf("\noi: %s", s);
                     input->fInputs4[kk-1] = strtod(s, NULL);
+                };
+
+            }else if(ii==13){
+
+                if(kk>0){
+                    //printf("\noi: %s", s);
+                    input->C[kk-1] = strtod(s, NULL);
+                };
+
+            }else if(ii==14){
+
+                if(kk>0){
+                    input->K[kk-1] = strtod(s, NULL);
                 };
 
             };
@@ -146,7 +164,7 @@ void inputPrintParameters(struct inputStruct* input){
     int ii;
 
     printf("\nParameters:");
-    printf("\nc: %f", input->c);
+    //printf("\nc: %f", input->c);
     printf("\nN: %i", input->N);
     printf("\nNmarkers: %i", input->Nmarkers);
 
@@ -178,6 +196,16 @@ void inputPrintParameters(struct inputStruct* input){
     printf("\nBoundary inputs 4: ");
     for(ii=0; ii<input->Nmarkers; ii++){
         printf("%f, ", input->fInputs4[ii]);
+    };
+
+    printf("\nBoundary C: ");
+    for(ii=0; ii<input->Nmarkers; ii++){
+        printf("%f, ", input->C[ii]);
+    };
+
+    printf("\nBoundary K: ");
+    for(ii=0; ii<input->Nmarkers; ii++){
+        printf("%f, ", input->K[ii]);
     };
 
 

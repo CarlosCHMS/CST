@@ -7,6 +7,8 @@
         FTYPE* fInputs;
         FTYPE* fInputs1;
         FTYPE* fInputs4;
+        FTYPE* C;
+        FTYPE* K;
         char* types;
 
         int* pointPropag;
@@ -18,7 +20,7 @@
 
     void boundaryAlloc(struct boundaryStruct* bound);
 
-    void boundaryInit(struct boundaryStruct* bound, struct gridStruct* grid, int* markers, FTYPE* fInputs, FTYPE* fInputs1, FTYPE* fInputs4, char* types);
+    void boundaryInit(struct boundaryStruct* bound, struct gridStruct* grid, struct inputStruct* input);
 
     void boundarySetPointPropag(struct boundaryStruct* bound);
 

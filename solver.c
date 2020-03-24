@@ -12,6 +12,7 @@ void solverAloc(struct solverStruct* solver){
     solver->Tnew = (FTYPE*)malloc(solver->grid->Np*sizeof(FTYPE));
     solver->flux = (FTYPE*)malloc(solver->grid->Np*sizeof(FTYPE));
     solver->TPointShare = (int*)malloc(solver->grid->Np*sizeof(int));
+    solver->dualCA = (FTYPE*)malloc(solver->grid->Np*sizeof(FTYPE));
 
 }
 
@@ -19,17 +20,13 @@ void solverInit(struct solverStruct* solver, struct gridStruct* grid, struct inp
 
     //inputPrintParameters(input);
 
-    solver->c = input->c;
-    solver->k = input->k;
+    //solver->c = input->c;
+    //solver->k = input->k;
     //printf("\n%f", input->c);
     solver->N = input->N;
 
     solver->grid = grid;
     solver->bound = (struct boundaryStruct*)malloc(sizeof(struct boundaryStruct));
-
-    boundaryInit(solver->bound, solver->grid, input->markers, input->fInputs, input->fInputs1, input->fInputs4, input->types);
-
-    //boundaryPrintTypes(solver->bound);
 
     solver->tol = 0.000001;
     solver->NmaxImplicit = 100;
@@ -37,11 +34,19 @@ void solverInit(struct solverStruct* solver, struct gridStruct* grid, struct inp
     solver->Nsave = input->Nsave;
     solver->outputName = input->outName;
 
+    boundaryInit(solver->bound, solver->grid, input);
+
+    //boundaryPrintTypes(solver->bound);
+
     solverAloc(solver);
 
     solverCalcTPointShare(solver);
 
     solverInitTemp(solver);
+
+    solverCalcDualCA(solver);
+
+    //solverPrintDualCA(solver);
 
 }
 
@@ -159,8 +164,8 @@ void solverPrintParameters(struct solverStruct* solver){
     int ii;
 
     printf("\nParameters:");
-    printf("\nc: %f", solver->c);
-    printf("\nN: %i", solver->N);
+    //printf("\nc: %f", solver->c);
+    //printf("\nN: %i", solver->N);
 
     printf("\nBoundary markers: ");
     for(ii=0; ii<solver->grid->Nm; ii++){
@@ -172,9 +177,29 @@ void solverPrintParameters(struct solverStruct* solver){
         printf("%f, ", solver->bound->fInputs[ii]);
     };
 
+    printf("\nBoundary inputs1: ");
+    for(ii=0; ii<solver->grid->Nm; ii++){
+        printf("%f, ", solver->bound->fInputs1[ii]);
+    };
+
+    printf("\nBoundary inputs4: ");
+    for(ii=0; ii<solver->grid->Nm; ii++){
+        printf("%f, ", solver->bound->fInputs4[ii]);
+    };
+
     printf("\nBoundary types: ");
     for(ii=0; ii<solver->grid->Nm; ii++){
         printf("%c, ", solver->bound->types[ii]);
+    };
+
+    printf("\nBoundary C: ");
+    for(ii=0; ii<solver->grid->Nm; ii++){
+        printf("%f, ", solver->bound->C[ii]);
+    };
+
+    printf("\nBoundary K: ");
+    for(ii=0; ii<solver->grid->Nm; ii++){
+        printf("%f, ", solver->bound->K[ii]);
     };
 
 
@@ -184,6 +209,8 @@ void solverPropagates(struct solverStruct* solver, FTYPE* T, FTYPE* flux){
 
     int ii, p0, p1, p2;
     FTYPE a0, a1, Tm, q, s, c, h, esig;
+
+    FTYPE* k;
 
     for(ii=0; ii<solver->grid->Np; ii++){
 
@@ -197,28 +224,21 @@ void solverPropagates(struct solverStruct* solver, FTYPE* T, FTYPE* flux){
 
             gridGetElemPoints(solver->grid, ii, &p0, &p1, &p2);
 
+            k = &(solver->bound->K[solver->bound->elemIndex[ii]]);
+
             Tm = (T[p0] + T[p1] + T[p2])/3;
 
             gridCalcGradCoef(solver->grid, ii, 0, &a0, &a1);
-            flux[p0] += solver->k*(a0*(T[p1] - Tm) + a1*(T[p2] - Tm));
+            flux[p0] += (*k)*(a0*(T[p1] - Tm) + a1*(T[p2] - Tm));
 
             gridCalcGradCoef(solver->grid, ii, 1, &a0, &a1);
-            flux[p1] += solver->k*(a0*(T[p2] - Tm) + a1*(T[p0] - Tm));
+            flux[p1] += (*k)*(a0*(T[p2] - Tm) + a1*(T[p0] - Tm));
 
             gridCalcGradCoef(solver->grid, ii, 2, &a0, &a1);
-            flux[p2] += solver->k*(a0*(T[p0] - Tm) + a1*(T[p1] - Tm));
-/*
-        }else if(boundaryElemIsHeat(solver->bound, ii)){
+            flux[p2] += (*k)*(a0*(T[p0] - Tm) + a1*(T[p1] - Tm));
+            //printf("\n%f,", flux[p0]);
 
-            //Constant heat flux boundary condition
 
-            gridGetElemPoints(solver->grid, ii, &p0, &p1, &p2);
-            s = gridCalcArea(solver->grid, ii);
-            q = boundaryGetElemInput(solver->bound, ii);
-
-            flux[p0] -= s*q/2;
-            flux[p1] -= s*q/2;
-*/
         }else if(boundaryElemIsHeat(solver->bound, ii)){
 
             //Convective heat flux boundary condition
@@ -248,7 +268,7 @@ void solverPropagates(struct solverStruct* solver, FTYPE* T, FTYPE* flux){
 void solverSimulateExplicity(struct solverStruct* solver){
 
     int ii, jj, n;
-    FTYPE saveStep;
+    FTYPE c, saveStep;
     FTYPE* aux, save;
     FILE* outFile;
 
@@ -276,8 +296,8 @@ void solverSimulateExplicity(struct solverStruct* solver){
         for(jj=0; jj<solver->grid->Np; jj++){
 
             if(solver->bound->pointPropag[jj]){
-
-                solver->Tnew[jj] = solver->T[jj] - solver->flux[jj]/(solver->c*solver->grid->dualArea[jj]);
+                //printf("\n%f,", solver->flux[jj]);
+                solver->Tnew[jj] = solver->T[jj] - solver->flux[jj]/(solver->dualCA[jj]);
                 //printf("\n%f: %f", solver->T[ii], solver->Tnew[ii]);
 
             };
@@ -541,3 +561,54 @@ void solverSalveVTK(struct solverStruct* solver){
     fclose(f1);
 
 }
+
+void solverCalcDualCA(struct solverStruct* solver){
+
+    int p1, p2, p3, ii;
+    FTYPE A, c;
+
+    for(ii=0; ii<solver->grid->Np; ii++){
+        solver->dualCA[ii] = 0.0;
+    };
+
+    for(ii=0; ii<solver->grid->Ne; ii++){
+        if(solver->grid->elem[ii][0]==solver->grid->type2){
+
+            gridGetElemPoints(solver->grid, ii, &p1, &p2, &p3);
+
+            A = gridCalcArea(solver->grid, ii)/3;
+
+            c = solver->bound->C[solver->bound->elemIndex[ii]];
+
+            solver->dualCA[p1] += A*c;
+            solver->dualCA[p2] += A*c;
+            solver->dualCA[p3] += A*c;
+
+        };
+
+    };
+
+    /*
+
+    for(ii=0; ii<solver->grid->Np; ii++){
+
+        solver->dualC[ii] /= solver->grid->dualArea[ii];
+
+    };
+
+    */
+
+}
+
+void solverPrintDualCA(struct solverStruct* solver){
+
+    int ii;
+
+    for(ii=0; ii<solver->grid->Np; ii++){
+
+        printf("%i, %f,\n", ii, solver->dualCA[ii]);
+
+    };
+
+}
+

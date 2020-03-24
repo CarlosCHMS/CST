@@ -1,14 +1,15 @@
 # depslib dependency file v1.0
-1584885377 source:/home/carlos/Documents/CSU/CSU/boundary.c
+1585000443 source:/home/carlos/Documents/CSU/CSU/boundary.c
 	<stdio.h>
 	<stdlib.h>
 	<math.h>
 	"grid.h"
+	"input.h"
 	"boundary.h"
 
 1584885377 /home/carlos/Documents/CSU/CSU/grid.h
 
-1584885377 /home/carlos/Documents/CSU/CSU/boundary.h
+1584998525 /home/carlos/Documents/CSU/CSU/boundary.h
 
 1584885377 source:/home/carlos/Documents/CSU/CSU/grid.c
 	<stdio.h>
@@ -16,14 +17,14 @@
 	<math.h>
 	"grid.h"
 
-1584885377 source:/home/carlos/Documents/CSU/CSU/input.c
+1585001606 source:/home/carlos/Documents/CSU/CSU/input.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"grid.h"
 	"input.h"
 
-1584885377 /home/carlos/Documents/CSU/CSU/input.h
+1585001558 /home/carlos/Documents/CSU/CSU/input.h
 
 1584885377 source:/home/carlos/Documents/CSU/CSU/main.c
 	<stdio.h>
@@ -32,9 +33,9 @@
 	"solver.h"
 	"input.h"
 
-1584885377 /home/carlos/Documents/CSU/CSU/solver.h
+1585002314 /home/carlos/Documents/CSU/CSU/solver.h
 
-1584885377 source:/home/carlos/Documents/CSU/CSU/solver.c
+1585003655 source:/home/carlos/Documents/CSU/CSU/solver.c
 	<stdio.h>
 	<stdlib.h>
 	<math.h>
