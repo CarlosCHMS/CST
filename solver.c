@@ -205,7 +205,7 @@ void solverPrintParameters(struct solverStruct* solver){
 
 };
 
-void solverPropagates(struct solverStruct* solver, FTYPE* T, FTYPE* flux){
+void solverPropagatesOld(struct solverStruct* solver, FTYPE* T, FTYPE* flux){
 
     int ii, p0, p1, p2;
     FTYPE a0, a1, Tm, q, s, c, h, esig;
@@ -217,6 +217,8 @@ void solverPropagates(struct solverStruct* solver, FTYPE* T, FTYPE* flux){
         flux[ii] = 0.0;
 
     };
+
+    printf("\nmethod1");
 
     for(ii=0; ii<solver->grid->Ne; ii++){
 
@@ -236,6 +238,72 @@ void solverPropagates(struct solverStruct* solver, FTYPE* T, FTYPE* flux){
 
             gridCalcGradCoef(solver->grid, ii, 2, &a0, &a1);
             flux[p2] += (*k)*(a0*(T[p0] - Tm) + a1*(T[p1] - Tm));
+            //printf("\n%f,", flux[p0]);
+
+
+        }else if(boundaryElemIsHeat(solver->bound, ii)){
+
+            //Convective heat flux boundary condition
+            gridGetElemPoints(solver->grid, ii, &p0, &p1, &p2);
+
+            s = gridCalcArea(solver->grid, ii);
+
+            c = solver->bound->fInputs[solver->bound->elemIndex[ii]];
+
+            h = solver->bound->fInputs1[solver->bound->elemIndex[ii]];
+
+            esig = solver->bound->fInputs4[solver->bound->elemIndex[ii]];;
+
+            Tm = (solver->T[p0] + solver->T[p1])/2;
+
+            q = c - h*Tm - esig*Tm*Tm*Tm*Tm;
+
+            flux[p0] -= s*q/2;
+            flux[p1] -= s*q/2;
+
+        };
+
+    };
+
+}
+
+void solverPropagates(struct solverStruct* solver, FTYPE* T, FTYPE* flux){
+
+    int ii, p0, p1, p2;
+    FTYPE a0, a1, Tm, q, s, c, h, esig, aux;
+
+    FTYPE* k;
+
+    for(ii=0; ii<solver->grid->Np; ii++){
+
+        flux[ii] = 0.0;
+
+    };
+
+    for(ii=0; ii<solver->grid->Ne; ii++){
+
+        if(boundaryElemIsDomain(solver->bound, ii)){
+
+            gridGetElemPoints(solver->grid, ii, &p0, &p1, &p2);
+
+            k = &(solver->bound->K[solver->bound->elemIndex[ii]]);
+
+            Tm = (T[p0] + T[p1] + T[p2])/3;
+
+            gridCalcGradCoef2(solver->grid, ii, 0, &a0, &a1);
+            aux = (*k)*(a0*(T[p0] - Tm) + a1*(T[p1] - Tm));
+            flux[p0] += aux;
+            flux[p1] -= aux;
+
+            gridCalcGradCoef2(solver->grid, ii, 1, &a0, &a1);
+            aux = (*k)*(a0*(T[p1] - Tm) + a1*(T[p2] - Tm));
+            flux[p1] += aux;
+            flux[p2] -= aux;
+
+            gridCalcGradCoef2(solver->grid, ii, 2, &a0, &a1);
+            aux = (*k)*(a0*(T[p2] - Tm) + a1*(T[p0] - Tm));
+            flux[p2] += aux;
+            flux[p0] -= aux;
             //printf("\n%f,", flux[p0]);
 
 

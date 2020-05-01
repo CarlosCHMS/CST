@@ -44,6 +44,8 @@ void solverPrintParameters(struct solverStruct* solver);
 
 void solverPropagates(struct solverStruct* solver, FTYPE* T, FTYPE* flux);
 
+void solverPropagates2(struct solverStruct* solver, FTYPE* T, FTYPE* flux);
+
 void solverSimulateExplicity(struct solverStruct* solver);
 
 void solverSimulateImplicity(struct solverStruct* solver);

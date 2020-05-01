@@ -40,6 +40,8 @@ void gridCalcDualArea(struct gridStruct* grid);
 
 void gridCalcGradCoef(struct gridStruct* grid, int ie, int ip, FTYPE* a0, FTYPE* a1);
 
+void gridCalcGradCoef2(struct gridStruct* grid, int ie, int ip, FTYPE* a1, FTYPE* a2);
+
 void gridPrintGradCoef(struct gridStruct* grid);
 
 void gridCheckGradCoef(struct gridStruct* grid);

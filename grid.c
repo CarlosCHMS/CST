@@ -275,6 +275,46 @@ void gridCalcGradCoef(struct gridStruct* grid, int ie, int ip, FTYPE* a0, FTYPE*
 
 }
 
+void gridCalcGradCoef2(struct gridStruct* grid, int ie, int ip, FTYPE* a1, FTYPE* a2){
+
+    int p1, p2, p3;
+    FTYPE dx1, dx2, dy1, dy2, xm, ym, dr1xdr2, dr1dr2;
+
+    if(ip == 0){
+
+        gridGetElemPoints(grid, ie, &p1, &p2, &p3);
+
+    }else if(ip == 1){
+
+        gridGetElemPoints(grid, ie, &p3, &p1, &p2);
+
+    }else if(ip == 2){
+
+        gridGetElemPoints(grid, ie, &p2, &p3, &p1);
+
+    }else{
+
+        printf("Erro 1 in: gridCalcGradCoef");
+
+    };
+
+    xm = (grid->x[p3] + grid->x[p1] + grid->x[p2])/3;
+    ym = (grid->y[p3] + grid->y[p1] + grid->y[p2])/3;
+
+    dx1 = grid->x[p1] - xm;
+    dx2 = grid->x[p2] - xm;
+
+    dy1 = grid->y[p1] - ym;
+    dy2 = grid->y[p2] - ym;
+
+    dr1xdr2 = dx1*dy2 - dx2*dy1;
+    dr1dr2 = dx1*dx2 + dy1*dy2;
+
+    *a1 = 0.5*(dr1dr2 + (dx2*dx2 + dy2*dy2))/dr1xdr2;
+    *a2 = -0.5*(dr1dr2 + (dx1*dx1 + dy1*dy1))/dr1xdr2;
+
+}
+
 void gridCheckGradCoef(struct gridStruct* grid){
 
     int ii;
