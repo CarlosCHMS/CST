@@ -16,7 +16,7 @@ int main(){
 
     inputPrintParameters(input);
 
-    gridInit(grid, input->meshName);
+    gridInit(grid, input);
 
     //gridPrintNumbers(grid);
 

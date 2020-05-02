@@ -139,6 +139,12 @@ void inputInit(struct inputStruct* input){
                     input->K[kk-1] = strtod(s, NULL);
                 };
 
+            }else if(ii==15){
+
+                if(kk>0){
+                    input->geo = strtod(s, NULL);
+                };
+
             };
 
             kk ++;
@@ -208,6 +214,6 @@ void inputPrintParameters(struct inputStruct* input){
         printf("%f, ", input->K[ii]);
     };
 
-
+    printf("\ngeo: %i", input->geo);
 
 };

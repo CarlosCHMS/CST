@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include "input.h"
 #include "grid.h"
 
 void gridAloc(struct gridStruct* grid){
@@ -22,7 +23,7 @@ void gridAloc(struct gridStruct* grid){
 
 }
 
-void gridInit(struct gridStruct* grid, char* fileName){
+void gridInit(struct gridStruct* grid, struct inputStruct* input){
 
     FILE* f1;
     int ii, jj, kk, alocFlag;
@@ -32,7 +33,8 @@ void gridInit(struct gridStruct* grid, char* fileName){
     grid->type1 = 4;
     grid->type2 = 5;
     grid->maxElemEntry = 5;
-    f1 = fopen(fileName, "r");
+    f1 = fopen(input->meshName, "r");
+    grid->geo = input->geo;
 
     ii = 0;
     jj = 0;
@@ -212,7 +214,7 @@ float gridCalcArea(struct gridStruct* grid, int ii){
 void gridCalcDualArea(struct gridStruct* grid){
 
     int p1, p2, p3, ii;
-    FTYPE A;
+    FTYPE A, y1, y2, y3;
 
     for(ii=0; ii<grid->Np; ii++){
         grid->dualArea[ii] = 0.0;
@@ -225,9 +227,24 @@ void gridCalcDualArea(struct gridStruct* grid){
 
             A = gridCalcArea(grid, ii)/3;
 
-            grid->dualArea[p1] += A;
-            grid->dualArea[p2] += A;
-            grid->dualArea[p3] += A;
+            if(grid->geo == 1){
+
+                y1 = grid->y[p1];
+                y2 = grid->y[p2];
+                y3 = grid->y[p3];
+
+                grid->dualArea[p1] += A*(22*y1 + 7*y2 + 7*y3)/36;
+                grid->dualArea[p2] += A*(22*y2 + 7*y3 + 7*y1)/36;
+                grid->dualArea[p3] += A*(22*y3 + 7*y1 + 7*y2)/36;
+
+            }else{
+
+                grid->dualArea[p1] += A;
+                grid->dualArea[p2] += A;
+                grid->dualArea[p3] += A;
+
+            };
+
 
         };
 
@@ -278,7 +295,7 @@ void gridCalcGradCoef(struct gridStruct* grid, int ie, int ip, FTYPE* a0, FTYPE*
 void gridCalcGradCoef2(struct gridStruct* grid, int ie, int ip, FTYPE* a1, FTYPE* a2){
 
     int p1, p2, p3;
-    FTYPE dx1, dx2, dy1, dy2, xm, ym, dr1xdr2, dr1dr2;
+    FTYPE dx1, dx2, dy1, dy2, xm, ym, dr1xdr2, dr1dr2, yb;
 
     if(ip == 0){
 
@@ -298,8 +315,8 @@ void gridCalcGradCoef2(struct gridStruct* grid, int ie, int ip, FTYPE* a1, FTYPE
 
     };
 
-    xm = (grid->x[p3] + grid->x[p1] + grid->x[p2])/3;
-    ym = (grid->y[p3] + grid->y[p1] + grid->y[p2])/3;
+    xm = (grid->x[p1] + grid->x[p2] + grid->x[p3])/3;
+    ym = (grid->y[p1] + grid->y[p2] + grid->y[p3])/3;
 
     dx1 = grid->x[p1] - xm;
     dx2 = grid->x[p2] - xm;
@@ -312,6 +329,14 @@ void gridCalcGradCoef2(struct gridStruct* grid, int ie, int ip, FTYPE* a1, FTYPE
 
     *a1 = 0.5*(dr1dr2 + (dx2*dx2 + dy2*dy2))/dr1xdr2;
     *a2 = -0.5*(dr1dr2 + (dx1*dx1 + dy1*dy1))/dr1xdr2;
+
+    if(grid->geo == 1){
+
+        yb = (5*grid->y[p1] + 5*grid->y[p2] + 2*grid->y[p3])/12;
+        *a1 *= yb;
+        *a2 *= yb;
+
+    };
 
 }
 

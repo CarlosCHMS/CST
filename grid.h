@@ -20,9 +20,12 @@ struct gridStruct{
     FTYPE* dualArea;
 
     int** elem;
+
+    int geo;
+
 };
 
-void gridInit(struct gridStruct* grid, char* fileName);
+void gridInit(struct gridStruct* grid, struct inputStruct* input);
 
 void gridPrintNumbers(struct gridStruct* grid);
 

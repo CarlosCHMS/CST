@@ -6,23 +6,23 @@
 
 ###############################################################################
 # CSU input parameters
-[input]
+[input] 
 # Total time [s]
-t = 1000
+t = 10000000
 #
 # Time step dt [s]
-dt = 1
+dt = 200
 #
 # Mesh file name
-meshName = case7.mshsim
+meshName = case8.mshsim
 #
 # Number of intermediary saves
 Nsave = 4
 #
 # Output file name
-outName = case7.csv
+outName = output8.csv
 #
-# Geometry, plane or axisymetric
+# geometry
 geometry = axisymetric
 ###############################################################################
 [material = steel] 
@@ -61,26 +61,26 @@ k = 143
 #
 type = constant temperature
 #
-temperature = 500
-#
-#------------------------------------------------------------------------------
-[boundary = 2]
-#
-type = constant temperature
-#
 temperature = 300
 #
 #------------------------------------------------------------------------------
-[boundary = 3]
+[boundary = 2]
 #
 type = heat flux
 #
 heat flux = 0
 #
 #------------------------------------------------------------------------------
+[boundary = 3]
+#
+type = constant temperature
+#
+temperature = 500
+#
+#------------------------------------------------------------------------------
 [boundary = 4]
 #
-type = interface
+type = heat flux
 #
 heat flux = 0
 #
@@ -92,13 +92,4 @@ type = domain
 initial temperature = 400
 #
 material = steel
-#
-#------------------------------------------------------------------------------
-[boundary = 6]
-#
-type = domain
-#
-initial temperature = 400
-#
-material = aluminum
 #

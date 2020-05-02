@@ -324,8 +324,17 @@ void solverPropagates(struct solverStruct* solver, FTYPE* T, FTYPE* flux){
 
             q = c - h*Tm - esig*Tm*Tm*Tm*Tm;
 
-            flux[p0] -= s*q/2;
-            flux[p1] -= s*q/2;
+            if(solver->grid->geo == 1){
+
+                flux[p0] -= (3*solver->grid->y[p0] + solver->grid->y[p1])*s*q/8;
+                flux[p1] -= (3*solver->grid->y[p1] + solver->grid->y[p0])*s*q/8;
+
+            }else{
+
+                flux[p0] -= s*q/2;
+                flux[p1] -= s*q/2;
+
+            };
 
         };
 
@@ -633,7 +642,7 @@ void solverSalveVTK(struct solverStruct* solver){
 void solverCalcDualCA(struct solverStruct* solver){
 
     int p1, p2, p3, ii;
-    FTYPE A, c;
+    FTYPE A, c, y1, y2, y3;
 
     for(ii=0; ii<solver->grid->Np; ii++){
         solver->dualCA[ii] = 0.0;
@@ -648,9 +657,23 @@ void solverCalcDualCA(struct solverStruct* solver){
 
             c = solver->bound->C[solver->bound->elemIndex[ii]];
 
-            solver->dualCA[p1] += A*c;
-            solver->dualCA[p2] += A*c;
-            solver->dualCA[p3] += A*c;
+            if(solver->grid->geo == 1){
+
+                y1 = solver->grid->y[p1];
+                y2 = solver->grid->y[p2];
+                y3 = solver->grid->y[p3];
+
+                solver->dualCA[p1] += c*A*(22*y1 + 7*y2 + 7*y3)/36;
+                solver->dualCA[p2] += c*A*(22*y2 + 7*y3 + 7*y1)/36;
+                solver->dualCA[p3] += c*A*(22*y3 + 7*y1 + 7*y2)/36;
+
+            }else{
+
+                solver->dualCA[p1] += A*c;
+                solver->dualCA[p2] += A*c;
+                solver->dualCA[p3] += A*c;
+
+            };
 
         };
 

@@ -7,26 +7,27 @@
 	"input.h"
 	"boundary.h"
 
-1588354859 /home/carlos/Documents/CSU/CSU/grid.h
+1588359254 /home/carlos/Documents/CSU/CSU/grid.h
 
 1584998525 /home/carlos/Documents/CSU/CSU/boundary.h
 
-1588354837 source:/home/carlos/Documents/CSU/CSU/grid.c
+1588363377 source:/home/carlos/Documents/CSU/CSU/grid.c
 	<stdio.h>
 	<stdlib.h>
 	<math.h>
+	"input.h"
 	"grid.h"
 
-1585050458 source:/home/carlos/Documents/CSU/CSU/input.c
+1588358105 source:/home/carlos/Documents/CSU/CSU/input.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"grid.h"
 	"input.h"
 
-1585001558 /home/carlos/Documents/CSU/CSU/input.h
+1588359373 /home/carlos/Documents/CSU/CSU/input.h
 
-1584885377 source:/home/carlos/Documents/CSU/CSU/main.c
+1588359147 source:/home/carlos/Documents/CSU/CSU/main.c
 	<stdio.h>
 	<stdlib.h>
 	"grid.h"
@@ -35,7 +36,7 @@
 
 1588355373 /home/carlos/Documents/CSU/CSU/solver.h
 
-1588356587 source:/home/carlos/Documents/CSU/CSU/solver.c
+1588363347 source:/home/carlos/Documents/CSU/CSU/solver.c
 	<stdio.h>
 	<stdlib.h>
 	<math.h>

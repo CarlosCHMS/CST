@@ -1,6 +1,8 @@
 #ifndef INPUT_H_INCLUDED
 #define INPUT_H_INCLUDED
 
+    typedef double FTYPE;
+
     struct inputStruct{
 
         //FTYPE c;
@@ -17,6 +19,7 @@
         char* outName;
         FTYPE* C;
         FTYPE* K;
+        int geo;
 
     };
 
