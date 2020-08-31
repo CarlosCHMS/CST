@@ -15,3 +15,5 @@ The CSU code has a core that is write in c using the codeblock IDE. This choice 
 python3 CSU.py PathToYour.csi
 
 The CSU.py is developed in python 3 using the spyder IDE. It also runs in python 2.
+
+The CSU is not finished and currently run only thermal conduction models.
